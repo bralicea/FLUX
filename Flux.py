@@ -1046,7 +1046,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
         self.radius = 150
-        self.shield = 900
+        self.shield = 3
         self.shootTimer = pygame.time.get_ticks()
         self.missTimer = pygame.time.get_ticks()
         self.laserTimer = pygame.time.get_ticks()
@@ -1055,7 +1055,7 @@ class Boss(pygame.sprite.Sprite):
         self.posX = self.rect.centerx
         self.stateTimer = pygame.time.get_ticks()
         self.speedy = 0
-        self.stage = 1
+        self.stage = 3
         self.beginTimer = False
         self.asteroidsTimer = 0
 
