@@ -69,7 +69,7 @@ def draw_shield_bar_Boss(surf, x, y, pct):
         pct = 0
     BAR_LENGTH = 100
     BAR_HEIGHT = 10
-    fill = (pct / 900 )* BAR_LENGTH
+    fill = (pct / 800 )* BAR_LENGTH
     outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
     fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
     pygame.draw.rect(surf, RED, fill_rect)
@@ -90,10 +90,7 @@ def playerHits(value):
 
 # Allows rotation around center
 def rotate(image, rect, angle):
-    # Rotate the image while keeping its center.
-    # Rotate the original image without modifying it.
     new_image = pygame.transform.rotate(image, angle)
-    # Get a new rect with the center of the old rect.
     rect = new_image.get_rect(center=rect.center)
     return new_image, rect
 
@@ -105,17 +102,6 @@ def displayCD(self):
 
     if math.floor((pygame.time.get_ticks() - self.warptimer) / 1000) == 15:
         player.boolean = 0
-
-#Display timer on asteroid field in boss stage 2
-def asteroidFieldTimer(self):
-    draw_text(screen, 'Survive for: ' + str(60 - math.floor((pygame.time.get_ticks() - self.asteroidsTimer) / 1000)) + ' Seconds',
-        24, WIDTH / 2, 30)
-    pygame.display.flip()
-
-    # Stage 2 lasts 60 seconds
-    if pygame.time.get_ticks() - self.asteroidsTimer > 60000:
-        self.stage = 3
-        self.state = 0
 
 def mainMenu(value):
     # Move selection in main menu
@@ -199,7 +185,7 @@ def show_go_screen():
     mainMenu(0)
 
     pygame.mixer.music.load(path.join(snd_dir, "Skyfire (Title Screen).ogg"))
-    pygame.mixer.music.set_volume(0.8)
+    pygame.mixer.music.set_volume(0.1)
     pygame.mixer.music.play(loops=-1)
 
     screen.blit(select_img, (213, HEIGHT / 2 - 100 ))
@@ -335,7 +321,7 @@ def stats():
             draw_text(screen, "Shots Fired: " + str(shots), 26, WIDTH / 3, HEIGHT / 2 - 50)
             draw_text(screen, "Powerups Used: " + str(powers), 26, WIDTH / 3, HEIGHT / 2 - 100)
             draw_text(screen, "Hits Taken: " + str(hits_taken), 26, WIDTH / 3 * 2, HEIGHT / 2 - 100)
-            draw_text(screen, "Fastest Time: " + str(end_timer) + " seconds", 26, WIDTH / 3 * 2, HEIGHT / 2 - 50)
+            draw_text(screen, "Fastest Time: " + str(end_timer), 26, WIDTH / 3 * 2, HEIGHT / 2 - 50)
             draw_text(screen, "Number of Attempts: " + str(att), 26, WIDTH / 3, HEIGHT / 2)
             draw_text(screen, "Number of Completions: " + str(com), 26, WIDTH / 3 * 2, HEIGHT / 2)
 
@@ -1046,7 +1032,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
         self.radius = 150
-        self.shield = 3
+        self.shield = 800
         self.shootTimer = pygame.time.get_ticks()
         self.missTimer = pygame.time.get_ticks()
         self.laserTimer = pygame.time.get_ticks()
@@ -1055,7 +1041,7 @@ class Boss(pygame.sprite.Sprite):
         self.posX = self.rect.centerx
         self.stateTimer = pygame.time.get_ticks()
         self.speedy = 0
-        self.stage = 3
+        self.stage = 1
         self.beginTimer = False
         self.asteroidsTimer = 0
 
@@ -1065,12 +1051,12 @@ class Boss(pygame.sprite.Sprite):
                 self.stateTimer = pygame.time.get_ticks()
                 self.state = 0
 
-            if self.state == 4 and pygame.time.get_ticks() - self.timer1 > 14500:
+            if self.state == 4 and pygame.time.get_ticks() - self.timer1 > 12500:
                 self.stateTimer = pygame.time.get_ticks()
                 self.state = 0
 
             if self.state == 0:
-                if pygame.time.get_ticks() - self.stateTimer > 15000 and self.shield > 500:
+                if pygame.time.get_ticks() - self.stateTimer > 15000 and self.shield > 550:
                     self.stateTimer = pygame.time.get_ticks()
                     self.state = random.randint(1, 2)
 
@@ -1157,7 +1143,7 @@ class Boss(pygame.sprite.Sprite):
                         self.rect.centerx = WIDTH / 2
 
                 if self.rect.centerx == WIDTH / 2:
-                    # self.state = 3 disables repeated calls to self.state = 2
+                    # self.state = 4 disables repeated calls to self.state = 2
                     self.timer1 = pygame.time.get_ticks()
                     self.state = 4
                     self.special()
@@ -1167,6 +1153,15 @@ class Boss(pygame.sprite.Sprite):
             if self.beginTimer == False:
                 self.beginTimer = True
                 self.asteroidsTimer = pygame.time.get_ticks()
+
+            draw_text(screen, 'Survive for: ' + str(60 - math.floor((pygame.time.get_ticks() - self.asteroidsTimer) / 1000)) + ' Seconds',
+                24, WIDTH / 2, 30)
+            pygame.display.flip()
+
+            # Stage 2 lasts 60 seconds
+            if pygame.time.get_ticks() - self.asteroidsTimer > 60000:
+                self.stage = 3
+                self.state = 0
 
             self.rect.centery -= 4
             if self.rect.centery < -200:
@@ -1345,10 +1340,15 @@ hit_sound = pygame.mixer.Sound(path.join(snd_dir, "Hit_hurt42.wav"))
 shoot_sound = pygame.mixer.Sound(path.join(snd_dir, "laser_shoot5.wav"))
 shoot_soundBoss = pygame.mixer.Sound(path.join(snd_dir, "laser_shoot4.wav"))
 shoot_soundMiss = pygame.mixer.Sound(path.join(snd_dir, "Randomize34.wav"))
-expl_sounds = []
-for snd in ['explosion.wav', 'explosion8.wav']:
-    expl_sounds.append(pygame.mixer.Sound(path.join(snd_dir, snd)))
 player_die_sound = pygame.mixer.Sound(path.join(snd_dir, 'rumble1.ogg'))
+expl0 = pygame.mixer.Sound(path.join(snd_dir, 'explosion.wav'))
+expl1 = pygame.mixer.Sound(path.join(snd_dir, 'explosion8.wav'))
+
+sounds = [pu_sound, laser_sound, specials_sound, hit_sound, shoot_sound, shoot_soundBoss, shoot_soundMiss, player_die_sound, expl0, expl1]
+for snd in sounds:
+    snd.set_volume(0.02)
+
+expl_sounds = [expl0, expl1]
 
 # Game loop
 game_on = True
@@ -1554,9 +1554,6 @@ while running:
 
     if player.boolean == 1:
         displayCD(player)
-
-    if boss.stage == 2:
-        asteroidFieldTimer(boss)
 
     pygame.display.flip()
 
